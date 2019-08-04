@@ -7,6 +7,9 @@ package frames;
 
 import java.awt.Dimension;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Scanner;
 import javax.swing.*;
 
 /**
@@ -20,27 +23,31 @@ public class Frames {
      */
     public static void main(String[] args) {
 
-        Marco marco = new Marco();
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter an angle: ");
+        Marco marco = new Marco(sc.nextInt());
 
     }
 
 }
 
 class Marco extends JFrame {
-
-    public Marco() {
-        setSize(650, 520);
-        setVisible(true);
+    public Marco(int angle) {
+        setSize(550, 520);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Computer Graphics");
 
-        Panel panel = new Panel();
+        Panel panel = new Panel(angle);
 
-        Panel2 panel2 = new Panel2();
-        panel2.setSize(150, 520);
+//        Panel2 panel2 = new Panel2();
+//        panel2.setSize(150, 520);
+        panel.setSize(500, 500);
+        panel.setLocation(150,0);
+//        add(panel2);
         add(panel);
-        add(panel2);
+        
+        setVisible(true);
 
         setLocationRelativeTo(null);
     }
@@ -48,9 +55,10 @@ class Marco extends JFrame {
 }
 
 class Panel extends JPanel {
-
-    public Panel() {
-        setBackground(Color.WHITE);
+    public int angle;
+    public Panel(int angle) {
+        this.angle = angle;
+        setBackground(Color.black);
         setSize(500, 500);
     }
 
@@ -69,7 +77,7 @@ class Panel extends JPanel {
         int w = size.width - insets.left - insets.right;
         int h = size.height - insets.top - insets.bottom;
 
-        g2d.setColor(Color.black);
+        g2d.setColor(Color.white);
 
         int xmin = w / 2 - 100;
         int xmax = w / 2 + 100;
@@ -80,7 +88,7 @@ class Panel extends JPanel {
         g2d.drawLine(xmax, ymin, xmax, ymax);   // xmax
         g2d.drawLine(xmin, ymin, xmax, ymin);   // ymin
         g2d.drawLine(xmax, ymax, xmin, ymax);   // ymax
-        int angle = 30;
+        
         coordinates(g2d, angle, w/2, h/2, xmin, ymin, xmax, ymax);
             
     }
@@ -104,15 +112,13 @@ class Panel extends JPanel {
                 g2d.drawLine(points[i].x, points[i].y, points[(i + 1)%4].x, points[(i + 1)%4].y);
             }else{
                 
-                
-                
                 int x1 = points[i].x;
                 int y1 = points[i].y;
                 int x2 = points[(i + 1)%4].x;
                 int y2 = points[(i + 1)%4].y;
                 int dx = x2 - x1;
                 int dy = y2 - y1;
-                System.out.println("dx:"+dx+"  dy:"+dy);
+                
                 int p[] = new int[4];
                 int q[] = new int[4];
                 p[0] = -dx;     q[0] = x1 - xmin;   // Left
@@ -136,7 +142,7 @@ class Panel extends JPanel {
                 }else{
                     u2 = u[3];
                 }
-                // If something fails, interchange HERE 'u1' and 'u2' values
+                
                 if(u2<u1){
                     double temp = u1;
                     u1 = u2;
@@ -149,9 +155,6 @@ class Panel extends JPanel {
                 g2d.drawLine((int)(x1+u1*dx), (int)(y1+u1*dy), (int)(x1+u2*dx), (int)(y1+u2*dy));
                 g2d.setColor(Color.red);
                 g2d.drawLine((int)(x1+u2*dx), (int)(y1+u2*dy), x2, y2);
-                
-                
-                
                 
             }
         }
@@ -174,9 +177,23 @@ class Panel extends JPanel {
     
 }
 
-class Panel2 extends JPanel {
-
+class Panel2 extends JPanel implements ActionListener{
+    int angle;
+    JLabel label = new JLabel("Enter angle:");
+    JTextField field = new JTextField(5);
+    JButton btn = new JButton("Get shape");
+    
     public Panel2() {
         setBackground(Color.BLUE);
+        label.setForeground(Color.WHITE);
+        btn.addActionListener(this);
+        add(label); 
+        add(field);
+        add(btn);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        angle = Integer.parseInt(field.getText());
     }
 }
