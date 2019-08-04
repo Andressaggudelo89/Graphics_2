@@ -87,22 +87,65 @@ class Panel extends JPanel {
     // This function is to calculate the points in which each segment line, starts and end.
     private void coordinates(Graphics2D g2d, int angle, int w, int h, int xmin, int ymin, int xmax, int ymax) {
         Point points[] = new Point[4];
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 4; i++) {
             int x_pos = (int) Math.round(141 * Math.cos(Math.toRadians(angle)));
             int y_pos = (int) Math.round(141 * Math.sin(Math.toRadians(angle)));
             points[i] = new Point(w + x_pos, h + y_pos);
             angle += 90;
         }
 
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 4; i++) {
             int n1 = getCode(points[i].x, points[i].y, xmin, ymin, xmax, ymax);
             int n2 = getCode(points[(i + 1)%4].x, points[(i + 1)%4].y, xmin, ymin, xmax, ymax);
             if (((n1 | n2) == 0)) {
                 g2d.setColor(Color.green);
                 g2d.drawLine(points[i].x, points[i].y, points[(i + 1)%4].x, points[(i + 1)%4].y);
             }else{
-                g2d.setColor(Color.blue);
-                g2d.drawLine(points[i].x, points[i].y, points[(i + 1)%4].x, points[(i + 1)%4].y);
+                
+                
+                
+                int x1 = points[i].x;
+                int y1 = points[i].y;
+                int x2 = points[(i + 1)%4].x;
+                int y2 = points[(i + 1)%4].y;
+                int dx = x2 - x1;
+                int dy = y2 - y1;
+
+                int p[] = new int[4];
+                int q[] = new int[4];
+                p[0] = -dx;     q[0] = x1 - xmin;   // Left
+                p[1] = dx;      q[1] = xmax - x1;   // Right
+                p[2] = -dy;     q[2] = y1 - ymin;   // Top
+                p[3] = dy;      q[3] = ymax - y1;   // Bottom
+                
+                double u[] = new double[4];
+                for (int j = 0; j < q.length; j++) {
+                    u[j] = (double)q[j]/p[j];
+                }
+                // De esos 4 u's, solo me sirven 2, los que estan en el rango (0-1). Get them!!
+                double u1, u2;
+                if(u[0]>0 && u[0]<1){
+                    u1 = u[0];
+                }else{
+                    u1 = u[1];
+                }
+                if(u[2]>0 && u[2]<1){
+                    u2 = u[2];
+                }else{
+                    u2 = u[3];
+                }
+                // If something fails, interchange HERE 'u1' and 'u2' values
+                
+                g2d.setColor(Color.red);
+                g2d.drawLine(x1, y1, (int)(x1+u1*dx), (int)(y1+u1*dy));
+                g2d.setColor(Color.green);
+                g2d.drawLine((int)(x1+u1*dx), (int)(y1+u1*dy), (int)(x1+u2*dx), (int)(y1+u2*dy));
+                g2d.setColor(Color.red);
+                g2d.drawLine((int)(x1+u2*dx), (int)(y1+u2*dy), x2, y2);
+                
+                
+                
+                
             }
         }
     }
