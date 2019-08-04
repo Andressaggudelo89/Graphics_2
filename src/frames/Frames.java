@@ -80,8 +80,9 @@ class Panel extends JPanel {
         g2d.drawLine(xmax, ymin, xmax, ymax);   // xmax
         g2d.drawLine(xmin, ymin, xmax, ymin);   // ymin
         g2d.drawLine(xmax, ymax, xmin, ymax);   // ymax
-
-        coordinates(g2d, 0, w/2, h/2, xmin, ymin, xmax, ymax);
+        int angle = 30;
+        coordinates(g2d, angle, w/2, h/2, xmin, ymin, xmax, ymax);
+            
     }
     
     // This function is to calculate the points in which each segment line, starts and end.
@@ -94,6 +95,7 @@ class Panel extends JPanel {
             angle += 90;
         }
 
+        
         for (int i = 0; i < 4; i++) {
             int n1 = getCode(points[i].x, points[i].y, xmin, ymin, xmax, ymax);
             int n2 = getCode(points[(i + 1)%4].x, points[(i + 1)%4].y, xmin, ymin, xmax, ymax);
@@ -110,7 +112,7 @@ class Panel extends JPanel {
                 int y2 = points[(i + 1)%4].y;
                 int dx = x2 - x1;
                 int dy = y2 - y1;
-
+                System.out.println("dx:"+dx+"  dy:"+dy);
                 int p[] = new int[4];
                 int q[] = new int[4];
                 p[0] = -dx;     q[0] = x1 - xmin;   // Left
@@ -135,6 +137,11 @@ class Panel extends JPanel {
                     u2 = u[3];
                 }
                 // If something fails, interchange HERE 'u1' and 'u2' values
+                if(u2<u1){
+                    double temp = u1;
+                    u1 = u2;
+                    u2 = temp;
+                }
                 
                 g2d.setColor(Color.red);
                 g2d.drawLine(x1, y1, (int)(x1+u1*dx), (int)(y1+u1*dy));
